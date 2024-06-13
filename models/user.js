@@ -1,47 +1,48 @@
-const mongoose = require ('mongoose');
-const bcrypt = require ('bcryptjs');
-const config = require ('../config/database');
+import mongoose, { Schema } from "mongoose";
 
-// User Schema
-const UserSchema = mongoose.Schema({
-    name: {
-        type: String
+const UserSchema = mongoose.Schema(
+    {
+        firstName: {
+            type: String,
+            required: true
+        },
+        lastName: {
+            type: String,
+            required: true
+        },
+        username: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        profileImage: {
+            type: String,
+            reqired: false,
+            default: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fpng-vector%2F20190710%2Fourlarge%2Fpngtree-user-vector-avatar-png-image_1541962.jpg&f=1&nofb=1&ipt=9b3c0027f028cc337a69c3020b8a3f47d9c53ec7c1d779cc6adf8fdf39690b60&ipo=images"
+        },
+        isAdmin: {
+            type: Boolean,
+            default: false,
+        },
+        roles: {
+            type: [Schema.Types.ObjectId],
+            required: true,
+            ref: "Role"
+        }
+
     },
-    email: {
-        type: String,
-        required: true
-    },
-    username: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-});
+    {
+        timestamps: true
+    }
+);
 
-// Vytvoření modelu
-const User = mongoose.model('User', UserSchema);
-
-module.exports.getUserById = function(id, callback) {
-    User.findById(id, callback);
-}
-
-module.exports.getUserByUsername = function(username, callback) {
-    const query = {username: username}
-    User.findOne(query, callback);
-}
-
-module.exports.addUser = function(newUser, callback) {
-    bcrypt.genSalt(10, (err, salt) => {
-        if (err) return callback(err);
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if (err) return callback(err);
-            newUser.password = hash;
-            newUser.save(callback);
-        });
-    });
-};
-// Export modelu a funkcí
-module.exports = User;
+export default mongoose.model("User", UserSchema);
