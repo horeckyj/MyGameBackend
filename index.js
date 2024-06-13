@@ -2,6 +2,7 @@ import config from "./config/database.js";
 import mongoose from 'mongoose';
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import roleRoute from './rotes/role.js';
 import authRoute from './rotes/auth.js';
 import userRoute from './rotes/user.js';
@@ -12,6 +13,10 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true
+}));
 app.use("/api/role", roleRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
